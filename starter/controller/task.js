@@ -30,7 +30,6 @@ const deleteTask = async (req, res) => {
   } catch (error) {
     res.status(500).json({ msg: error });
   }
-
 };
 
 const getTask = async (req, res) => {
@@ -41,16 +40,28 @@ const getTask = async (req, res) => {
       return res.status(404).json({ msg: `no data found ${taskId}` });
     }
 
-     res.status(200).json({ task });
+    res.status(200).json({ task });
     //res.status(200).json({ task : null , status : 'success' });
-
   } catch (error) {
     res.status(500).json({ msg: error });
   }
 };
 
-const updateTask = (req, res) => {
-  res.json({ id: req.params.id });
+const updateTask = async (req, res) => {
+  try {
+    const { id: taskId } = req.params; 
+    const task = await Task.findOneAndUpdate(
+      { _id: taskId },
+      req.body,
+      {
+        runValidators: true,
+        new: true,
+      }
+    );
+    res.status(200).json({ task });
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
 };
 
 //export module as objects for scalability
